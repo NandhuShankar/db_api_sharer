@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a6275dcf-3c19-46f5-93c3-eb6cb989fd19" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="76ecbcc0-ad3a-4619-8f44-a55d17b68d16" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="login_sample_db"/>
+	</db:config>
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="215480cb-9b50-44c4-ba44-00a487be1a65" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="login_sample_db" />
+	</db:config>
+	<db:config name="Database_Config2" doc:name="Database Config" doc:id="7be3146b-2a58-4b58-873b-1622e4690308" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="login_sample_db" />
+	</db:config>
+	<flow name="dataShare_API" doc:id="7a3e229a-0d06-4050-8438-4d5f00fdf163" >
+		<http:listener doc:name="Listener" doc:id="ba2b461f-5ead-42db-a0d8-2017094ec463" config-ref="HTTP_Listener_config" path="anypoint/{ID}"/>
+		<set-variable value="#[%dw 2.0&#10;output application/dw&#10;---&#10;attributes.uriParams.ID as Number]" doc:name="Set Variable" doc:id="be32591f-f3e0-4a67-abd6-4c271036e410" variableName="tableID"/>
+		<db:update doc:name="Update" doc:id="549c9fd8-bc58-45be-b603-48b2bd17b6a3" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE users
+SET API_use = API_use+1
+WHERE user_id = :id;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{id: vars.tableID}]]]></db:input-parameters>
+		</db:update>
+		<db:select doc:name="Select" doc:id="c824bb9d-1ca9-40ca-b920-2df204ab7b96" config-ref="Database_Config">
+			<db:sql ><![CDATA[ SELECT * FROM user_data_:id;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{id: vars.tableID}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="7051a956-3011-4bd6-a04f-5b686e9541d3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
