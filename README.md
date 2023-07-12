@@ -1,7 +1,7 @@
 # db_api_sharer
 A php based web application that stores user data into a mysql API. A mule application then shares said data to given an API key.
-
-How it works:
+<br />
+How it works:<br />
 1.) User logs in and inputs data into the form. THey can see their data and how many times it has been pinged.<br />
 2.) The site generates an API key that lets the public request the user's data. They can share that key with others.<br />
 3.) Who ever has the key can send a GET request, and recieve the user's data in a JSON format to use for their purposes.<br />
