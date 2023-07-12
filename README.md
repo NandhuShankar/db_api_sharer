@@ -13,4 +13,6 @@ look at the code and edit to fit.<br />
 3. Install anypoint studio and paste the mule.xml<br />
 once the 3 services are running you should be able to use the sample python script or any API requester like ARC to ping data.<br />
 <br /><br />
+
+For reference watch this video: https://www.youtube.com/watch?v=WYufSGgaCZ8&t=2066s <br />
 This is one of my first projects, dm if anything is unclear!<br />
